@@ -40,7 +40,7 @@ def run_clustering():
     for i in range(len(paths)):
         shutil.copy2(paths[i], "output\cluster" + str(kpredictions[i]))
 
-    # now clustering is down and we compress all data and provide that with api
+    # now clustering is done and we compress all data and provide that with api
     print('zipping output')
     cmd = 'zip -r output.zip output*'
     os.system(cmd)
