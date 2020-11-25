@@ -1,8 +1,11 @@
 from fastapi import FastAPI, File, UploadFile
+import json
 import os
 import tempfile
-from clusterer import run_clustering
 from fastapi.responses import FileResponse
+
+from clusterer import run_clustering
+# from clusterer import predict_single_image
 
 lock_api = True
 
@@ -15,7 +18,7 @@ def set_lock_api(loc_api: bool):
 app = FastAPI()
 
 storage_path = '/carpet/'
-link_address = '/output.zip'
+link_address = 'output.zip'
 
 
 # uploaded_file_counter = 0
@@ -56,5 +59,22 @@ async def predict_uploaded_image():
         set_lock_api(loc_api=True)
         return FileResponse(link_address)
 
+
+@app.get("/get_predictions_clusters/")
+async def get_predictions_clusters_result():
+    if lock_api:
+        return "file is not available for now"
+    else:
+        set_lock_api(loc_api=True)
+        with open("json_resp.json", 'r', encoding='utf-8') as f:
+            return json.loads(f.read())
+
+
+# @app.post("/predict_with_saved_model/")
+# async def predict_with_saved_model(file: UploadFile = File(...)):
+#     single_image = await file.read()
+#     predict_single_image(single_image)
+
+
 # if __name__ == "__main__":
-# uvicorn.run(app, host="127.0.0.1", port=8000, log_level="info", reload=True)
+#     uvicorn.run(app, host="127.0.0.1", port=8000, log_level="info", reload=True)

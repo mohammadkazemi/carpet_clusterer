@@ -1,11 +1,9 @@
 import numpy as np
+import json
 import tensorflow as tf
-import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
-from sklearn.metrics import silhouette_score
 import cv2
 import os, glob, shutil
-from main import set_lock_api
 
 
 def run_clustering():
@@ -35,10 +33,17 @@ def run_clustering():
     kmodel.fit(pred_images)
     kpredictions = kmodel.predict(pred_images)
     shutil.rmtree('output')
+
+    json_response = {}
     for i in range(k):
-        os.makedirs("output\cluster" + str(i))
+        os.makedirs(f"output\cluster{i}")
+        json_response[f'cluster{i}'] = []
     for i in range(len(paths)):
-        shutil.copy2(paths[i], "output\cluster" + str(kpredictions[i]))
+        shutil.copy2(paths[i], f"output\cluster{kpredictions[i]}")
+        json_response[f'cluster{kpredictions[i]}'].append(paths[i])
+
+    with open("json_resp.json", 'w', encoding='utf-8') as f:
+        f.write(json.dumps(json_response))
 
     # now clustering is done and we compress all data and provide that with api
     print('zipping output')
@@ -67,5 +72,12 @@ def run_clustering():
     # plt.ylabel('Silhoutte Score')
     # plt.ylabel('K')
     # plt.show()
+    from main import set_lock_api
     set_lock_api(loc_api=False)
+
+
+
+# def predict_single_image(image_address):
+#     my_image = cv2.resize(cv2.imread(image_address), (224, 224))
+#     my_image = np.array(np.float32(my_image).reshape(len(my_image), -1) / 255)
 
