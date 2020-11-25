@@ -2,13 +2,20 @@ from fastapi import FastAPI, File, UploadFile
 import os
 import tempfile
 from clusterer import run_clustering
+from fastapi.responses import FileResponse
+
+lock_api = True
+
+
+def set_lock_api(loc_api: bool):
+    global lock_api
+    lock_api = loc_api
 
 
 app = FastAPI()
+
 storage_path = '/carpet/'
-# todo check this 
-link_address = '217.69.13.96:8001/output.zip'
-lock_api = True
+link_address = '/output.zip'
 
 
 # uploaded_file_counter = 0
@@ -36,7 +43,7 @@ def parse(file: UploadFile = File(...)):
         # print(content)
         # remove temp file
         run_clustering()
-        print('finished running clustering now files have benn moved')
+        print('finished running clustering')
         os.close(_)
         os.remove(path)
 
@@ -44,8 +51,10 @@ def parse(file: UploadFile = File(...)):
 @app.get("/get_predictions/")
 async def predict_uploaded_image():
     if lock_api:
-        return "file not available now"
-    return link_address
+        return "file is not available for now"
+    else:
+        set_lock_api(loc_api=True)
+        return FileResponse(link_address)
 
 # if __name__ == "__main__":
 # uvicorn.run(app, host="127.0.0.1", port=8000, log_level="info", reload=True)

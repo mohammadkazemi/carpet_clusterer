@@ -5,7 +5,7 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 import cv2
 import os, glob, shutil
-from main import lock_api
+from main import set_lock_api
 
 
 def run_clustering():
@@ -44,11 +44,11 @@ def run_clustering():
     print('zipping output')
     cmd = 'zip -r output.zip output*'
     os.system(cmd)
-    print('moving to output dir')
 
-    # move to download dir
-    cmd = 'mv output.zip ~/downloads/'
-    os.system(cmd)
+    # # move to download dir
+    # print('moving to output dir')
+    # cmd = 'mv output.zip ~/downloads/'
+    # os.system(cmd)
 
     # find the optimal group number
     # sil = []
@@ -67,5 +67,5 @@ def run_clustering():
     # plt.ylabel('Silhoutte Score')
     # plt.ylabel('K')
     # plt.show()
+    set_lock_api(loc_api=False)
 
-    lock_api = False
