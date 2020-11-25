@@ -1,6 +1,8 @@
 from fastapi import FastAPI, File, UploadFile
 import os
 import tempfile
+from clusterer import run_clustering
+
 
 app = FastAPI()
 storage_path = '/carpet/'
@@ -33,6 +35,8 @@ def parse(file: UploadFile = File(...)):
         # content = textract.process(path)
         # print(content)
         # remove temp file
+        run_clustering()
+        print('finished running clustering now files have benn moved')
         os.close(_)
         os.remove(path)
 
@@ -42,3 +46,6 @@ async def predict_uploaded_image():
     if lock_api:
         return "file not available now"
     return link_address
+
+# if __name__ == "__main__":
+# uvicorn.run(app, host="127.0.0.1", port=8000, log_level="info", reload=True)
