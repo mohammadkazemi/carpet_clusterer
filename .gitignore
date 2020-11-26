@@ -138,3 +138,5 @@ carpet.zip
 server_code/__pycache__/
 .idea/
 result/
+json_resp.json
+output*
