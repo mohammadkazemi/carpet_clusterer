@@ -53,23 +53,31 @@ def parse(file: UploadFile = File(...)):
 
 @app.get("/get_predictions/")
 async def predict_uploaded_image():
+    # production
     if lock_api:
         return "file is not available for now"
     else:
         set_lock_api(loc_api=True)
         return FileResponse(link_address)
-
+    
+    ## development test
+    # return FileResponse(link_address)
+    # pass
 
 @app.get("/get_predictions_clusters/")
 async def get_predictions_clusters_result():
+    # production
     if lock_api:
         return "file is not available for now"
     else:
         set_lock_api(loc_api=True)
         with open("json_resp.json", 'r', encoding='utf-8') as f:
             return json.loads(f.read())
+    # development
+    # with open("json_resp.json", 'r', encoding='utf-8') as f:
+    #         return json.loads(f.read()) 
 
-
+# todo
 # @app.post("/predict_with_saved_model/")
 # async def predict_with_saved_model(file: UploadFile = File(...)):
 #     single_image = await file.read()
