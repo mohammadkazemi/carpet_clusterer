@@ -49,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
     EditText resultTxt;
     private Image uploadImage;
     private Bitmap myBitmap;
+//    private String baseUrl = "http://10.0.2.2:8000";
+    private String baseUrl = "http://185.17.123.5:8000";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                     //  1/9/21 upload image with retrofit
                     RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), f);
                     MultipartBody.Part body = MultipartBody.Part.createFormData("file", f.getName(), reqFile);
-                    Service service = new Retrofit.Builder().baseUrl("http://10.0.2.2:8000").build().create(Service.class);
+                    Service service = new Retrofit.Builder().baseUrl(baseUrl).build().create(Service.class);
                     Log.d("mdev", "sending reaquest");
 
                     // TODO: 1/9/21 requesting in new thread
@@ -153,13 +156,14 @@ public class MainActivity extends AppCompatActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        Service service = new Retrofit.Builder().baseUrl("http://10.0.2.2:8000").build().create(Service.class);
+                        Service service = new Retrofit.Builder().baseUrl(baseUrl).build().create(Service.class);
                         Call<ResponseBody> req = service.getPredictionsClusters();
                         req.enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                 Toast.makeText(getApplicationContext(), "successfull request", Toast.LENGTH_LONG).show();
                                 try {
+
                                     resultTxt.setText(response.body().string());
 //                                    resultTxt.setMovementMethod(new ScrollingMovementMethod());
                                 } catch (IOException e) {
@@ -172,14 +176,10 @@ public class MainActivity extends AppCompatActivity {
 
                             }
                         });
-
-
                     }
                 }).start();
             }
         });
-
-
     }
 
 
