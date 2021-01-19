@@ -49,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
     EditText resultTxt;
     private Image uploadImage;
     private Bitmap myBitmap;
-//    private String baseUrl = "http://10.0.2.2:8000";
-    private String baseUrl = "http://185.17.123.5:8000";
+    private String baseUrl = "http://10.0.2.2:8000";
+//    private String baseUrl = "http://185.17.123.5:8000";
 
 
     @Override
