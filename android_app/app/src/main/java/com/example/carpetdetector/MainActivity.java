@@ -43,7 +43,6 @@ import retrofit2.http.Part;
 
 public class MainActivity extends AppCompatActivity {
 
-
     Button btnTakePhoto, btnUpload, btnResult;
     TextView imgPath, imgName;
     EditText resultTxt;
