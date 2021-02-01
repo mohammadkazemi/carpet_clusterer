@@ -7,9 +7,10 @@ from fastapi.responses import FileResponse
 from clusterer import run_clustering
 # from clusterer import predict_single_image
 
+# قفلی برای اینکه یوزر تا عملیات خوشه بندی انجام نشده نتواند اطلاعات را دانلود کند
 lock_api = True
 
-
+#  این تابع برای این است که ما قفل دانلود فایل های خوش بندی شده رو فعال و یا غیر فعال کنیم
 def set_lock_api(loc_api: bool):
     global lock_api
     lock_api = loc_api
@@ -21,14 +22,14 @@ storage_path = '/carpet/'
 link_address = 'output.zip'
 
 
-# uploaded_file_counter = 0
-
+# با این api
+# یوزر میتواند عکس فرش را اپلود کند تا ما بتوانیم فرش را به دیتای فرش هایی که داریم اضافه کنیم و سپس دیتای جدید را خوشه بندی کنیم
 @app.post("/uploadfile/")
 async def create_upload_file(file: UploadFile = File(...)):
     parse(file)
     return {"filename": file.filename}
 
-
+# نگاه میکنیم اگر عکس اپلود شده فرمت مناسب را داشت در پوشه ی مناسب قرار میدهیم و سپس عملیات خوشه بندی را روی ان انجام میدهیم
 def parse(file: UploadFile = File(...)):
     extension = os.path.splitext(file.filename)[1]
     if extension == '.jpg':
@@ -50,7 +51,9 @@ def parse(file: UploadFile = File(...)):
         os.close(_)
         os.remove(path)
 
-
+# اگر قفل دانلود فایل ها فعال نباشد با این 
+# api
+# میتوانیم فایل های خوشه بندی شده را دانلود کنیم
 @app.get("/get_predictions/")
 async def predict_uploaded_image():
     # production
@@ -64,6 +67,11 @@ async def predict_uploaded_image():
     # return FileResponse(link_address)
     # pass
 
+# با این api
+# اگر قفل api 
+# فعال نباشد میتوانیم اطلاعات خوشه بندی شده را به صورت فایل 
+# json 
+# داشته باشیم
 @app.get("/get_predictions_clusters/")
 async def get_predictions_clusters_result():
     # production

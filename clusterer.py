@@ -7,20 +7,27 @@ import os, glob, shutil
 
 
 def run_clustering():
+    # پاک کردن فرش های خوشه بندی شده ی قبلی
     cmd = 'rm -rf output*'
     os.system(cmd)
 
+
+    # درست کردن فولدر خورجی
     cmd = 'mkdir output'
     os.system(cmd)
 
+#  تعیین میکنیم از چه ادرسی اطلاعات فرش ها خوانده شود
     input_dir = 'carpet'
     glob_dir = input_dir + '/*.jpg'
 
+# ما اندازه تصاویر را به 224x224 
+# تغییر می دهیم تا با اندازه لایه ورودی مدل خود برای استخراج ویژگی مطابقت داشته باشد.
     images = [cv2.resize(cv2.imread(file),
                          (224, 224)) for file in glob.glob(glob_dir)]
     paths = [file for file in glob.glob(glob_dir)]
     images = np.array(np.float32(images).reshape(len(images), -1) / 255)
-
+# اکنون که ویژگی ها را استخراج کردیم ، اکنون می توان خوشه بندی را با استفاده از 
+# KMeans انجام دهیم.
     model = tf.keras.applications.MobileNetV2(include_top=False,
                                               weights='imagenet',
                                               input_shape=(224, 224, 3))
@@ -28,12 +35,15 @@ def run_clustering():
     predictions = model.predict(images.reshape(-1, 224, 224, 3))
     pred_images = predictions.reshape(images.shape[0], -1)
 
+
     k = 19
     kmodel = KMeans(n_clusters=k, n_jobs=-1, random_state=728)
     kmodel.fit(pred_images)
     kpredictions = kmodel.predict(pred_images)
     shutil.rmtree('output')
-
+# برای اینکه کاربر مبایل مجبور نباشد کل دیتای خوشه بندی شده را دانلود کند ما یک فایل 
+# json
+# تهیه میکنیم تا اطلاعات رو به صورت متنی هم بتونیم در اختیار کاربر قرار دهیم
     json_response = {}
     for i in range(k):
         os.makedirs(f"output\cluster{i}")
@@ -46,15 +56,13 @@ def run_clustering():
         f.write(json.dumps(json_response))
 
     # now clustering is done and we compress all data and provide that with api
+    # پس از انجام خوشه بندی دیتا رو فشرده میکنیم تا قابل دانلود باشد
     print('zipping output')
     cmd = 'zip -r output.zip output*'
     os.system(cmd)
 
-    # # move to download dir
-    # print('moving to output dir')
-    # cmd = 'mv output.zip ~/downloads/'
-    # os.system(cmd)
 
+#    با کد زیر متوانیم بفهمیم چه عددی برای تعداد خوشه ها مناسب است
     # find the optimal group number
     # sil = []
     # kl = []
@@ -72,6 +80,10 @@ def run_clustering():
     # plt.ylabel('Silhoutte Score')
     # plt.ylabel('K')
     # plt.show()
+
+    # متغیری را که برای این تعریف کرده بودیم که تا خوشه بندی انجام نشده کاربر نتواند دیتا را دانلود کند را 
+    # false
+    # میکنیم تا یوزر بتواند دیتای خوشه بندی شده را دانلود کند
     from main import set_lock_api
     set_lock_api(loc_api=False)
 

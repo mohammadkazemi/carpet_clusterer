@@ -1,0 +1,30 @@
+
+
+python3 -m venv .venv
+source .venv/bin/activate
+
+
+
+pip install tensorflow
+pip install fastapi[all]
+pip install opencv-python
+pip3 install -U scikit-learn
+pip install numpy
+pip install selenium
+pip install requests
+
+
+اگر میخواهید اطلاعات فرش را خودتان دوباره بگیرید و کد را تست کنید
+نیاز دارین تا chrome driver 
+را دانلود کنید
+https://chromedriver.chromium.org/downloads
+سپس  ادرس فایل دانلود شده را در 
+فایل کرالر در خط زیر قرار دهید
+driver = webdriver.Chrome('/Users/mohammadkazemi/MohammadProjects/chromedriver')
+
+
+
+برنامه ی اصلی را اجرا کنید و تست کنید
+
+
+deactivate
